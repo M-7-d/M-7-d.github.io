@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STONES COMPANY</title>
+    <link rel="icon" href="img/logo_icon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/home.css">
+    <!-- AOS CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/dist/umd/supabase.min.js"></script>
+    <!-- Main Script -->
+    <script src="js/main.js"></script>
+    <!-- Admin Navigation Script -->
+    <script src="js/admin-navigation.js"></script>
+    <!-- AOS JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+</head>
+
+<body>
+    <!-- Header -->
+    <header id="header">
+        <nav class="container">
+            <a href="#" class="logo"><img src="img/logo.png" alt="STONES COMPANY"></a>
+            <div class="links" id="links">
+                <span class="close_menu"><i class="fa-solid fa-xmark"></i></span>
+                <a href="#" class="logo mobile-logo"><img src="img/logo.png" alt="STONES COMPANY"></a>
+                <a class="active" href="#">Home</a>
+                <a href="#services">Products</a>
+                <a href="#footer">Contact</a>
+                <a href="admin.html" class="admin-btn" id="adminBtn">
+                    <i class="fas fa-user-shield me-2"></i>Admin
+                </a>
+            </div>
+            <div class="icons">
+                <button id="menu-toggle" class="icon_menu" aria-label="Toggle Menu"><i
+                        class="fa-solid fa-bars"></i></button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <div class="hero">
+        <div class="container">
+            <div class="div_Text">
+                <h4>Welcome to</h4>
+                <h1><span>STONES.</span></h1>
+                <p>📣 We proudly offer the finest PVC and aluminum parts and accessories! Whether you're looking for
+                    high quality, we're here to provide everything you need.</p>
+                <div class="btns">
+                    <a href="#services" class="btn primary-btn">Our Products</a>
+
+
+
+                    <!-- New Download Button -->
+                    <button class="btn secondary-btn" onclick="indirPDF()">
+                        <i class="fa fa-download"></i> Download Catalog
+                    </button>
+                </div>
+
+
+            </div>
+            <div class="div_design">
+                <div class="hero-slider">
+                    <div class="hero-slide active">
+                        <img src="img/new%20images/13.jpg" alt="Banner image 13" loading="lazy">
+                    </div>
+                    <div class="hero-slide">
+                        <img src="img/new%20images/14.jpg" alt="Banner image 14" loading="lazy">
+                    </div>
+                    <div class="hero-slide">
+                        <img src="img/new%20images/15.jpg" alt="Banner image 15" loading="lazy">
+                    </div>
+                    <div class="hero-slide">
+                        <img src="img/new%20images/16.jpg" alt="Banner image 16" loading="lazy">
+                    </div>
+                    <div class="hero-slide">
+                        <img src="img/new%20images/17.jpg" alt="Banner image 17" loading="lazy">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Featured Products Section -->
+    <section class="featured-products" id="services">
+        <div class="container">
+            <div class="top_section">
+                <h2>Our Featured Products</h2>
+                <p>Explore our high-quality selection of PVC and aluminum parts</p>
+                <!-- Add search bar -->
+                <div class="search-container mt-4">
+                    <div class="input-group mx-auto" style="max-width: 500px;">
+                        <span class="input-group-text bg-transparent border-end-0">
+                            <i class="fas fa-search text-primary"></i>
+                        </span>
+                        <input type="text" id="searchProducts" class="form-control border-start-0"
+                            placeholder="Search products..." style="background: rgba(255, 255, 255, 0.1);"
+                            autocomplete="off">
+                    </div>
+                </div>
+            </div>
+            <div class="product-cards" id="productCards">
+                <!-- Product cards will be loaded dynamically -->
+                <div class="loading-state">
+                    <div class="spinner"></div>
+                    <p>Loading products...</p>
+                </div>
+            </div>
+            <div class="pagination" id="pagination">
+                <!-- Pagination buttons will be added dynamically -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section class="projects" id="products">
+        <div class="container">
+            <div class="top_section">
+                <h2>Our products include:</h2>
+            </div>
+            <div class="project_box">
+                <img src="img/new%20images/4.jpg" alt="PVC Parts" loading="lazy">
+                <div class="text">
+                    <h4><span>Products</span></h4>
+                    <h3><a href="#">High-quality PVC parts</a></h3>
+                    <a href="#" class="link"><i class="fa-solid fa-arrow-up"></i></a>
+                </div>
+            </div>
+            <div class="project_box project_box_2">
+                <img src="img/new%20images/5.jpg" alt="Aluminum Parts" loading="lazy">
+                <div class="text">
+                    <h4><span>Products</span></h4>
+                    <h3><a href="#">Durable aluminum parts</a></h3>
+                    <a href="#" class="link"><i class="fa-solid fa-arrow-up"></i></a>
+                </div>
+            </div>
+            <div class="project_box">
+                <img src="img/new%20images/6.jpg" alt="Accessories" loading="lazy">
+                <div class="text">
+                    <h4><span>Products</span></h4>
+                    <h3><a href="#">A wide range of accessories</a></h3>
+                    <a href="#" class="link"><i class="fa-solid fa-arrow-up"></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Choose Us Section -->
+    <section class="why-choose-us">
+        <div class="container">
+            <div class="top_section">
+                <h1>Why choose Stones?</h1>
+            </div>
+            <div class="features">
+                <div class="feature-card">
+                    <div class="icon-wrapper"><i class="fa-solid fa-medal"></i></div>
+                    <h2><a href="#">Unparalleled quality</a></h2>
+                    <p>Our products undergo rigorous quality control to ensure they meet the highest standards.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon-wrapper"><i class="fa-solid fa-tags"></i></div>
+                    <h2><a href="#">Competitive prices</a></h2>
+                    <p>We offer the best value for your investment without compromising on quality.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon-wrapper"><i class="fa-solid fa-headset"></i></div>
+                    <h2><a href="#">Excellent customer service</a></h2>
+                    <p>Our dedicated team is always ready to assist you with any inquiries or support needs.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-social">
+                    <a href="https://www.facebook.com/share/1FgkkTihxv/" target="_blank" class="social-icon"><i
+                            class="fa-brands fa-facebook-f"></i></a>
+                    <a href="https://wa.me/+905301288498" target="_blank" class="social-icon"><i
+                            class="fa-brands fa-whatsapp"></i></a>
+                    <a href="https://www.instagram.com/stones_upvc?utm_source=qr&igsh=MXhoNnk3NHE4aTVlbQ=="
+                        target="_blank" class="social-icon"><i class="fa-brands fa-instagram"></i></a>
+                </div>
+                <p>© <span id="current-year"></span> STONES COMPANY. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Set current year in footer
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+
+        // Ensure proper viewport height on mobile
+        function setMobileHeight() {
+            let vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+        }
+
+        setMobileHeight();
+        window.addEventListener('resize', setMobileHeight);
+
+        // Initialize AOS
+        document.addEventListener('DOMContentLoaded', function () {
+            AOS.init({
+                duration: 800,
+                once: true,
+                offset: 100
+            });
+        });
+    </script>
+
+    <!-- Mobile Sidebar Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Get elements
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('links');
+            const closeMenu = document.querySelector('.close_menu');
+
+            // Handle menu opening
+            menuToggle.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                // Force repaint of sidebar before showing
+                sidebar.style.display = 'flex';
+                sidebar.offsetHeight; // Force reflow
+
+                // Lock the body scroll
+                document.body.classList.add('sidebar-open');
+
+                // Show sidebar
+                sidebar.classList.add('active');
+            });
+
+            // Handle menu closing
+            closeMenu.addEventListener('click', function (e) {
+                e.preventDefault();
+                sidebar.classList.remove('active');
+                document.body.classList.remove('sidebar-open');
+            });
+
+            // Close when clicking anywhere outside the sidebar
+            document.addEventListener('click', function (e) {
+                if (sidebar.classList.contains('active') &&
+                    !sidebar.contains(e.target) &&
+                    e.target !== menuToggle) {
+                    sidebar.classList.remove('active');
+                    document.body.classList.remove('sidebar-open');
+                }
+            });
+        });
+        function indirPDF() {
+            const link = document.createElement('a');
+            link.href = 'STONES.pdf'; // Path to your PDF
+            link.download = 'STONES.pdf'; // Name for the downloaded file
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en" id="admin-page">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STONES COMPANY - Admin Products</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1e40af',
+                        secondary: '#1e293b',
+                        accent: '#3b82f6',
+                        success: '#10b981',
+                        warning: '#f59e0b',
+                        danger: '#ef4444',
+                        light: '#f8fafc',
+                        dark: '#0f172a'
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- First load Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Then load environment variables -->
+    <script>
+        // Inject environment variables
+        window.ENV = {
+            SUPABASE_URL: 'https://uvrozprcewgwybuhguai.supabase.co',
+            SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV2cm96cHJjZXdnd3lidWhndWFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI3NTI1MTAsImV4cCI6MjA1ODMyODUxMH0.2EgqTZjwcOv_kKP38g9nsou1ECsR_ybnAaGZduXWlaQ'
+        };
+    </script>
+    <!-- Then load your env.js which initializes Supabase -->
+    <script src="js/env.js"></script>
+    <!-- Then load your config -->
+    <script src="js/config.js"></script>
+    <!-- Finally load your admin.js -->
+    <script src="js/admin.js"></script>
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+
+<body>
+    <div id="admin-dashboard" class="d-none">
+        <div class="admin-layout">
+            <button id="sidebarToggle" class="sidebar-toggle d-lg-none" style="display: none;">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <div class="sidebar text-white" id="sidebar">
+                <div class="logo">
+                    <a href="index.html"><img src="img/logo.png" alt="STONES COMPANY" class="img-fluid"></a>
+                </div>
+                <div class="mt-5">
+                    <div class="px-4 py-3">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0">
+                                <div class="position-relative">
+                                    <img id="userAvatar" src="https://ui-avatars.com/api/?name=Admin+User&background=1e40af&color=fff" alt="Admin" class="rounded-circle" width="50" height="50" style="object-fit: cover; border: 3px solid white;">
+                                    <span class="position-absolute bottom-0 end-0 bg-success rounded-circle p-1" style="width: 14px; height: 14px; border: 2px solid white;"></span>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="mb-0 text-white" id="userName">Admin User</h6>
+                                <small class="text-white-50" id="userRole">Administrator</small>
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="my-4 opacity-20">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#products" data-section="products">
+                                <i class="fas fa-box"></i> Products
+                                <span class="notification-badge">3</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white-50 hover:text-white" href="#" id="logoutBtn">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="main-content">
+                <div id="products-section" class="content-section fade-in">
+                    <div class="d-flex justify-content-between align-items-center mb-5">
+                        <div>
+                            <h2 class="mb-1 fw-bold">Products Management</h2>
+                            <p class="text-muted mb-0">Manage your product inventory</p>
+                        </div>
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProductModal">
+                            <i class="fas fa-plus me-2"></i> Add New Product
+                        </button>
+                    </div>
+
+                    <div class="card mb-5">
+                        <div class="card-body">
+                            <div class="row g-4">
+                                <div class="col-md-3">
+                                    <select class="form-select" id="categoryFilter">
+                                        <option value="">All Categories</option>
+                                        <option value="PVC Window & Door Profiles">PVC Window & Door Profiles</option>
+                                        <option value="PVC Accessories">PVC Accessories</option>
+                                        <option value="PVC Door Panels">PVC Door Panels</option>
+                                        <option value="PVC Processing Machines">PVC Processing Machines</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" placeholder="Search products..." id="searchProducts">
+                                        <button class="btn btn-outline-primary" type="button">
+                                            <i class="fas fa-search"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <button class="btn btn-outline-secondary w-100" id="resetFilters">
+                                        <i class="fas fa-sync-alt me-2"></i> Reset
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>  
+
+                    <div class="table-container">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th style="width: 15%">ID</th>
+                                    <th style="width: 45%">Product</th>
+                                    <th style="width: 20%">Category</th>
+                                    <th style="width: 20%">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Products will be loaded here -->
+                            </tbody>
+                        </table>
+
+                        <div class="d-flex justify-content-between align-items-center mt-4 pagination-container d-none">
+                            <div class="showing-entries text-muted">
+                                Showing 1 to 7 of 0 entries
+                            </div>
+                            <nav aria-label="Product navigation">
+                                <ul class="pagination mb-0">
+                                    <!-- Pagination will be added here when needed -->
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container"></div>
+
+    <div id="login-screen" class="login-container">
+        <div class="login-form fade-in">
+            <div class="login-logo">
+                <a href="index.html"><img src="img/logo.png" alt="STONES COMPANY"></a>
+            </div>
+            <h4 class="text-center">Admin Products</h4>
+            <p class="text-center text-muted mb-4">Enter your credentials to access the products panel</p>
+            <form id="loginForm">
+                <div class="mb-4">
+                    <label for="email" class="form-label">Email</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0">
+                            <i class="fas fa-envelope text-muted"></i>
+                        </span>
+                        <input type="email" class="form-control border-start-0" id="email" placeholder="Enter your email" required>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label for="password" class="form-label">Password</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0">
+                            <i class="fas fa-lock text-muted"></i>
+                        </span>
+                        <input type="password" class="form-control border-start-0" id="password" placeholder="Enter password" required>
+                    </div>
+                </div>
+                <div class="mb-4 form-check">
+                    <input type="checkbox" class="form-check-input" id="rememberMe">
+                    <label class="form-check-label" for="rememberMe">Remember me</label>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-sign-in-alt me-2"></i> Sign In
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal fade" 
+         id="addProductModal" 
+         tabindex="-1" 
+         aria-labelledby="addProductModalLabel">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addProductModalLabel">Add New Product</h5>
+                    <button type="button" 
+                            class="btn-close" 
+                            data-bs-dismiss="modal" 
+                            aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="addProductForm" enctype="multipart/form-data">
+                        <div class="mb-4">
+                            <label class="form-label">Product Name</label>
+                            <input type="text" class="form-control" name="name" required>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Category</label>
+                            <select class="form-select" name="category" required>
+                                <option value="">Select Category</option>
+                                <option value="PVC Window & Door Profiles">PVC Window & Door Profiles</option>
+                                <option value="PVC Accessories">PVC Accessories</option>
+                                <option value="PVC Door Panels">PVC Door Panels</option>
+                                <option value="PVC Processing Machines">PVC Processing Machines</option>
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control" rows="4" name="description" required></textarea>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Product Images</label>
+                            <div class="d-flex gap-3">
+                                <div class="flex-grow-1">
+                                    <input type="file" 
+                                           class="form-control" 
+                                           name="images" 
+                                           id="productImages"
+                                           accept="image/png, image/jpeg, image/jpg"
+                                           multiple
+                                           required>
+                                    <small class="text-muted">Accepted formats: JPG, JPEG, PNG. Max size: 5MB per image</small>
+                                </div>
+                                <div class="image-previews d-flex gap-2" style="overflow-x: auto;">
+                                    <!-- Image previews will be added here -->
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="addProductBtn">Add Product</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="editProductModal" tabindex="-1" aria-labelledby="editProductModalLabel">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editProductModalLabel">Edit Product</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editProductForm">
+                        <input type="hidden" name="id">
+                        <div class="mb-4">
+                            <label class="form-label">Product Name</label>
+                            <input type="text" class="form-control" name="name" required>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Category</label>
+                            <select class="form-select" name="category" required>
+                                <option value="">Select Category</option>
+                                <option value="PVC Window & Door Profiles">PVC Window & Door Profiles</option>
+                                <option value="PVC Accessories">PVC Accessories</option>
+                                <option value="PVC Door Panels">PVC Door Panels</option>
+                                <option value="PVC Processing Machines">PVC Processing Machines</option>
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control" rows="4" name="description" required></textarea>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Product Images</label>
+                            <div class="d-flex gap-3">
+                                <div class="flex-grow-1">
+                                    <input type="file" 
+                                           class="form-control" 
+                                           name="images" 
+                                           id="editProductImages"
+                                           accept="image/png, image/jpeg, image/jpg"
+                                           multiple>
+                                    <small class="text-muted">Accepted formats: JPG, JPEG, PNG. Max size: 5MB per image</small>
+                                </div>
+                                <div class="edit-image-previews d-flex gap-2" style="overflow-x: auto;">
+                                    <!-- Current images will be displayed here -->
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="updateProduct()">Update Product</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add this modal for viewing all images -->
+    <div class="modal fade" id="viewImagesModal" tabindex="-1" aria-labelledby="viewImagesModalLabel">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewImagesModalLabel">Product Images</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3" id="modalImageContainer">
+                        <!-- Images will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async function () {
+            // Make sure ENV is defined before proceeding
+            const waitForEnv = () => {
+                return new Promise((resolve) => {
+                    const checkEnv = () => {
+                        if (window.ENV && window.ENV.ADMIN_USERNAME) {
+                            resolve();
+                        } else {
+                            setTimeout(checkEnv, 100);
+                        }
+                    };
+                    checkEnv();
+                });
+            };
+
+            try {
+                await waitForEnv();
+                
+                // Rest of your initialization code...
+                const supabaseUrl = window.ENV.SUPABASE_URL;
+                const supabaseKey = window.ENV.SUPABASE_ANON_KEY;
+                const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+                function checkAuth() {
+                    const isAuthenticated = localStorage.getItem('adminAuthenticated');
+                    if (!isAuthenticated) {
+                        document.getElementById('login-screen').classList.remove('d-none');
+                        document.getElementById('admin-dashboard').classList.add('d-none');
+                    } else {
+                        document.getElementById('login-screen').classList.add('d-none');
+                        document.getElementById('admin-dashboard').classList.remove('d-none');
+                        loadProducts();
+                    }
+                }
+
+                checkAuth();
+
+                document.getElementById('logoutBtn').addEventListener('click', async function (e) {
+                    e.preventDefault();
+                    
+                    try {
+                        const result = await window.supabaseClient.auth.signOut();
+                        
+                        if (result.error) {
+                            throw result.error;
+                        }
+                        
+                        document.getElementById('login-screen').classList.remove('d-none');
+                        document.getElementById('admin-dashboard').classList.add('d-none');
+                        showToast('Success', 'You have been logged out successfully.');
+                    } catch (error) {
+                        console.error('Logout error:', error);
+                        showToast('Error', 'An error occurred during logout. Please try again.', 'error');
+                    }
+                });
+
+                const sidebarToggle = document.getElementById('sidebarToggle');
+                if (sidebarToggle) {
+                    sidebarToggle.addEventListener('click', function () {
+                        document.getElementById('sidebar').classList.toggle('show');
+                    });
+                }
+
+                function checkMobile() {
+                    if (window.innerWidth < 768) {
+                        document.getElementById('sidebarToggle').classList.remove('d-none');
+                    } else {
+                        document.getElementById('sidebarToggle').classList.add('d-none');
+                        document.getElementById('sidebar').classList.remove('show');
+                    }
+                }
+
+                checkMobile();
+                window.addEventListener('resize', checkMobile);
+
+                document.getElementById('selectAllProducts')?.addEventListener('change', function () {
+                    const checkboxes = document.querySelectorAll('#products-section tbody .form-check-input');
+                    checkboxes.forEach(checkbox => checkbox.checked = this.checked);
+                });
+
+                document.getElementById('addProductBtn')?.addEventListener('click', function () {
+                    const form = document.getElementById('addProductForm');
+                    if (form.checkValidity()) {
+                        const formData = new FormData(form);
+                        addProduct(formData);
+                    } else {
+                        form.reportValidity();
+                    }
+                });
+
+                function showToast(title, message, type = 'success') {
+                    const toastContainer = document.querySelector('.toast-container');
+                    const toastId = 'toast-' + Date.now();
+                    const bgColor = type === 'success' ? 'var(--primary-color)' : 'var(--danger-color)';
+
+                    const toastHTML = `
+                        <div class="toast" id="${toastId}">
+                            <div class="toast-header" style="background: ${bgColor};">
+                                <strong class="me-auto text-white">${title}</strong>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+                            </div>
+                            <div class="toast-body">${message}</div>
+                        </div>
+                    `;
+
+                    toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+
+                    const toastElement = document.getElementById(toastId);
+                    const toast = new bootstrap.Toast(toastElement, { autohide: true, delay: 5000 });
+                    toast.show();
+
+                    toastElement.addEventListener('hidden.bs.toast', function () {
+                        toastElement.remove();
+                    });
+                }
+
+                const ITEMS_PER_PAGE = 7;
+                let currentPage = 1;
+
+                async function loadProducts(filters = {}, page = 1) {
+                    try {
+                        // First get total count
+                        let countQuery = supabase
+                            .from('products')
+                            .select('*', { count: 'exact', head: true });
+
+                        if (filters.category) {
+                            countQuery = countQuery.eq('category', filters.category);
+                        }
+                        if (filters.search) {
+                            countQuery = countQuery.or(`name.ilike.%${filters.search}%,description.ilike.%${filters.search}%`);
+                        }
+
+                        const { count, error: countError } = await countQuery;
+                        if (countError) throw countError;
+
+                        // Then get paginated data
+                        let query = supabase
+                            .from('products')
+                            .select('*')
+                            .order('created_at', { ascending: false });
+
+                        if (filters.category) {
+                            query = query.eq('category', filters.category);
+                        }
+                        if (filters.search) {
+                            query = query.or(`name.ilike.%${filters.search}%,description.ilike.%${filters.search}%`);
+                        }
+
+                        // Get exactly 7 items for current page
+                        const from = (page - 1) * ITEMS_PER_PAGE;
+                        query = query.range(from, from + ITEMS_PER_PAGE - 1);
+
+                        const { data, error } = await query;
+                        if (error) throw error;
+
+                        // Update table
+                        const tbody = document.querySelector('#products-section tbody');
+                        tbody.innerHTML = '';
+
+                        data.forEach(product => {
+                            tbody.innerHTML += `
+                                <tr data-product-id="${product.id}">
+                                    <td>
+                                        <span class="fw-medium">${product.id}</span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <img src="${product.image_urls && product.image_urls.length > 0 ? product.image_urls[0] : '/img/project1.jpg'}" class="product-image me-3" alt="Product">
+                                            <div>
+                                                <span class="fw-medium">${product.name}</span>
+                                                <br>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>${product.category}</td>
+                                    <td>
+                                        <div class="dropdown">
+                                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" 
+                                                    type="button" 
+                                                    data-bs-toggle="dropdown">
+                                                Actions
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                <li>
+                                                    <button class="dropdown-item edit-product" 
+                                                            data-product='${JSON.stringify(product)}'>
+                                                        <i class="fas fa-edit me-2"></i>Edit
+                                                    </button>
+                                                </li>
+                                                <li>
+                                                    <button class="dropdown-item delete-product">
+                                                        <i class="fas fa-trash me-2"></i>Delete
+                                                    </button>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                            `;
+                        });
+
+                        // Show/hide pagination based on total count
+                        const paginationContainer = document.querySelector('#products-section .pagination-container');
+                        if (count > ITEMS_PER_PAGE) {
+                            paginationContainer.classList.remove('d-none');
+                            
+                            // Calculate total pages
+                            const totalPages = Math.ceil(count / ITEMS_PER_PAGE);
+                            
+                            // Update pagination
+                            const pagination = document.querySelector('#products-section .pagination');
+                            pagination.innerHTML = `
+                                <li class="page-item ${page === 1 ? 'disabled' : ''}">
+                                    <a class="page-link" href="#" data-page="${page - 1}">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </a>
+                                </li>
+                                ${Array.from({ length: totalPages }, (_, i) => i + 1)
+                                    .map(pageNum => `
+                                        <li class="page-item ${pageNum === page ? 'active' : ''}">
+                                            <a class="page-link" href="#" data-page="${pageNum}">${pageNum}</a>
+                                        </li>
+                                    `).join('')}
+                                <li class="page-item ${page === totalPages ? 'disabled' : ''}">
+                                    <a class="page-link" href="#" data-page="${page + 1}">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                </li>
+                            `;
+
+                            // Add pagination click handlers
+                            pagination.querySelectorAll('.page-link').forEach(link => {
+                                link.addEventListener('click', function(e) {
+                                    e.preventDefault();
+                                    const newPage = parseInt(this.dataset.page);
+                                    if (!isNaN(newPage) && newPage > 0 && newPage <= totalPages) {
+                                        loadProducts(filters, newPage);
+                                    }
+                                });
+                            });
+                        } else {
+                            paginationContainer.classList.add('d-none');
+                        }
+
+                        // Update showing entries text
+                        const showingText = count > 0 
+                            ? `Showing ${from + 1} to ${Math.min(from + data.length, count)} of ${count} entries`
+                            : 'No entries to show';
+                        document.querySelector('#products-section .showing-entries').textContent = showingText;
+
+                        addProductEventListeners();
+
+                    } catch (error) {
+                        console.error('Error loading products:', error);
+                        showToast('Error', 'Failed to load products', 'error');
+                    }
+                }
+
+                async function addProduct(formData) {
+                    try {
+                        const imageFiles = formData.getAll('images');
+                        
+                        if (!imageFiles || imageFiles.length === 0) {
+                            throw new Error('Please select at least one image for the product.');
+                        }
+
+                        // Show loading state
+                        const addButton = document.querySelector('#addProductBtn');
+                        addButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
+                        addButton.disabled = true;
+
+                        // Upload images first
+                        const imageUrls = await uploadImages(imageFiles);
+                        console.log('Uploaded URLs:', imageUrls);
+
+                        // Create product with auto-generated ID
+                        const { data, error } = await supabase
+                            .from('products')
+                            .insert({
+                                name: formData.get('name'),
+                                category: formData.get('category'),
+                                description: formData.get('description'),
+                                image_urls: imageUrls.length > 0 ? imageUrls : null
+                            })
+                            .select();
+
+                        if (error) {
+                            console.error('Insert error:', error);
+                            throw error;
+                        }
+
+                        showToast('Success', 'Product added successfully');
+                        loadProducts();
+                        
+                        // Reset form and previews
+                        document.getElementById('addProductForm').reset();
+                        document.querySelector('.image-previews').innerHTML = '';
+                        
+                        // Close modal
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('addProductModal'));
+                        modal.hide();
+
+                    } catch (error) {
+                        console.error('Error adding product:', error);
+                        showToast('Error', error.message || 'Failed to add product', 'error');
+                    } finally {
+                        // Reset button state
+                        const addButton = document.querySelector('#addProductBtn');
+                        addButton.innerHTML = '<i class="fas fa-plus me-2"></i>Add Product';
+                        addButton.disabled = false;
+                    }
+                }
+
+                // Update the uploadImages function to ensure proper URL array format
+                async function uploadImages(files) {
+                    try {
+                        const uploadPromises = Array.from(files).map(async (file) => {
+                            // Validate image before upload
+                            validateImage(file);
+
+                            const fileExt = file.name.split('.').pop();
+                            const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+                            const filePath = `product-images/${fileName}`;
+
+                            // Upload to Supabase storage
+                            const { data, error } = await supabase.storage
+                                .from('products')
+                                .upload(filePath, file);
+
+                            if (error) {
+                                console.error('Upload error:', error);
+                                throw error;
+                            }
+
+                            // Get the public URL
+                            const { data: { publicUrl } } = supabase.storage
+                                .from('products')
+                                .getPublicUrl(filePath);
+
+                            console.log('Generated URL:', publicUrl); // Debug log
+                            return publicUrl;
+                        });
+
+                        const urls = await Promise.all(uploadPromises);
+                        console.log('Final URLs array:', urls); // Debug log
+                        return urls;
+                    } catch (error) {
+                        console.error('Error in uploadImages:', error);
+                        throw error;
+                    }
+                }
+
+                // Add this function to validate images
+                function validateImage(file) {
+                    const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+                    if (!validTypes.includes(file.type)) {
+                        throw new Error('Invalid file type. Please upload a JPG, JPEG or PNG image.');
+                    }
+
+                    const maxSize = 5 * 1024 * 1024; // 5MB
+                    if (file.size > maxSize) {
+                        throw new Error('File size too large. Maximum size is 5MB.');
+                    }
+
+                    return true;
+                }
+
+                // Make updateProduct globally available
+                window.updateProduct = async function() {
+                    const form = document.getElementById('editProductForm');
+                    const formData = new FormData(form);
+                    const productId = formData.get('id');
+
+                    try {
+                        // Show loading state
+                        const updateButton = document.querySelector('#editProductModal .btn-primary');
+                        updateButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
+                        updateButton.disabled = true;
+
+                        // Get remaining images from the preview container
+                        const remainingImages = Array.from(document.querySelectorAll('.edit-image-previews .position-relative'))
+                            .map(container => container.dataset.imageUrl)
+                            .filter(url => url); // Filter out any undefined/null values
+
+                        // Handle new image uploads if any
+                        const imageFiles = formData.getAll('images');
+                        let newImageUrls = [];
+
+                        // Only process new images if there are any
+                        if (imageFiles && imageFiles.length > 0 && imageFiles[0].size > 0) {
+                            // Filter out empty files
+                            const validFiles = imageFiles.filter(file => file.size > 0);
+                            if (validFiles.length > 0) {
+                                newImageUrls = await uploadImages(validFiles);
+                            }
+                        }
+
+                        // Combine remaining existing images with new images
+                        const finalImageUrls = [...remainingImages, ...newImageUrls];
+
+                        const { error } = await supabase
+                            .from('products')
+                            .update({
+                                name: formData.get('name'),
+                                category: formData.get('category'),
+                                description: formData.get('description'),
+                                image_urls: finalImageUrls
+                            })
+                            .eq('id', productId);
+
+                        if (error) throw error;
+
+                        showToast('Success', 'Product updated successfully');
+                        loadProducts();
+
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('editProductModal'));
+                        modal.hide();
+
+                    } catch (error) {
+                        console.error('Error updating product:', error);
+                        showToast('Error', error.message || 'Failed to update product', 'error');
+                    } finally {
+                        // Reset button state
+                        const updateButton = document.querySelector('#editProductModal .btn-primary');
+                        updateButton.innerHTML = 'Update Product';
+                        updateButton.disabled = false;
+                    }
+                };
+
+                async function deleteProduct(id) {
+                    if (!confirm('Are you sure you want to delete this product?')) return;
+
+                    try {
+                        // Show loading state
+                        const deleteButton = event.target.closest('.delete-product');
+                        if (deleteButton) {
+                            deleteButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deleting...';
+                            deleteButton.disabled = true;
+                        }
+
+                        // First get the product to check for images
+                        const { data: product } = await supabase
+                            .from('products')
+                            .select('image_urls')
+                            .eq('id', id)
+                            .single();
+
+                        // Delete the product
+                        const { error } = await supabase
+                            .from('products')
+                            .delete()
+                            .eq('id', id);
+
+                        if (error) throw error;
+
+                        showToast('Success', 'Product deleted successfully');
+                        loadProducts();
+
+                    } catch (error) {
+                        console.error('Error deleting product:', error);
+                        showToast('Error', error.message || 'Failed to delete product', 'error');
+                    } finally {
+                        // Reset button state if it exists
+                        const deleteButton = event.target.closest('.delete-product');
+                        if (deleteButton) {
+                            deleteButton.innerHTML = '<i class="fas fa-trash me-2"></i>Delete';
+                            deleteButton.disabled = false;
+                        }
+                    }
+                }
+
+                function addProductEventListeners() {
+                    // Edit product listeners
+                    document.querySelectorAll('.edit-product').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            const product = JSON.parse(e.target.closest('.edit-product').dataset.product);
+                            const form = document.getElementById('editProductForm');
+                            
+                            // Store original image URLs in a data attribute
+                            form.dataset.originalImages = JSON.stringify(product.image_urls || []);
+                            
+                            // Form alanlarını doldur
+                            form.querySelector('[name="id"]').value = product.id;
+                            form.querySelector('[name="name"]').value = product.name;
+                            form.querySelector('[name="category"]').value = product.category;
+                            form.querySelector('[name="description"]').value = product.description;
+
+                            // Display current images
+                            const imagePreviews = document.querySelector('.edit-image-previews');
+                            imagePreviews.innerHTML = '';
+                            
+                            if (product.image_urls && product.image_urls.length > 0) {
+                                product.image_urls.forEach(url => {
+                                    const imgContainer = document.createElement('div');
+                                    imgContainer.className = 'position-relative';
+                                    imgContainer.dataset.imageUrl = url; // Store the URL in data attribute
+                                    imgContainer.innerHTML = `
+                                        <img src="${url}" alt="Product" class="img-thumbnail" style="width: 100px; height: 100px; object-fit: cover;">
+                                        <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-1 remove-image">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    `;
+                                    imagePreviews.appendChild(imgContainer);
+                                });
+                            }
+
+                            // Add event listeners for image removal
+                            imagePreviews.querySelectorAll('.remove-image').forEach(btn => {
+                                btn.addEventListener('click', function() {
+                                    this.closest('.position-relative').remove();
+                                });
+                            });
+
+                            // Modal'ı göster
+                            const modal = new bootstrap.Modal(document.getElementById('editProductModal'));
+                            modal.show();
+                        });
+                    });
+
+                    // Delete product listeners
+                    document.querySelectorAll('.delete-product').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            const row = e.target.closest('tr');
+                            if (row) {
+                                const productId = row.dataset.productId;
+                                if (productId) {
+                                    deleteProduct(productId);
+                                }
+                            }
+                        });
+                    });
+                }
+
+                document.getElementById('categoryFilter')?.addEventListener('change', (e) => {
+                    loadProducts({ category: e.target.value });
+                });
+
+                document.getElementById('resetFilters')?.addEventListener('click', () => {
+                    document.getElementById('categoryFilter').value = '';
+                    document.getElementById('searchProducts').value = '';
+                    loadProducts();
+                });
+            } catch (error) {
+                console.error('Failed to initialize:', error);
+                showToast('Error', 'Failed to initialize application', 'error');
+            }
+        });
+    </script>
+</body>
+
+</html>
